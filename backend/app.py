@@ -10,6 +10,10 @@ class BlogRequest(BaseModel):
 class BlogResponse(BaseModel):
     content: str
 
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
+
 @app.post("/generate_blog", response_model=BlogResponse)
 def generate_blog(request: BlogRequest):
     topic = request.topic
