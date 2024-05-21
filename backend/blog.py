@@ -1,6 +1,7 @@
 import os
 from crewai import Agent, Task, Crew
-from utils import get_openai_api_key
+from utils import get_openai_api_key, get_mongo_db
+from datetime import datetime
 
 def generate_blog_content(topic):
     
@@ -110,6 +111,18 @@ def generate_blog_content(topic):
         verbose=2
     )
 
-    result = crew.kickoff(inputs={"topic": topic})
+    #result = crew.kickoff(inputs={"topic": topic})
+    result = "test"
+    # Conectar ao MongoDB e armazenar o resultado
+    db = get_mongo_db()
+    collection = db["blog_posts"]  # Nome da coleção
+    post = {
+        "topic": topic,
+        "content": result,
+        "status": "generated",
+        "created_at": datetime.now() 
+    }
+    collection.insert_one(post)
 
     return result
+
