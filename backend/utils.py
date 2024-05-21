@@ -1,23 +1,23 @@
 # Add your utilities or helper functions to this file.
 
-import os
+from os import getenv
 from dotenv import load_dotenv, find_dotenv
 from pymongo import MongoClient
 from urllib.parse import quote_plus
 from pymongo.server_api import ServerApi
 
 # these expect to find a .env file at the directory above the lesson.                                                                                                                     # the format for that file is (without the comment)                                                                                                                                       #API_KEYNAME=AStringThatIsTheLongAPIKeyFromSomeService
-def load_env():
+def _load_env():
     _ = load_dotenv(find_dotenv())
 
 def get_openai_api_key():
-    load_env()
-    openai_api_key = os.getenv("OPENAI_API_KEY")
+    _load_env()
+    openai_api_key = getenv("OPENAI_API_KEY")
     return openai_api_key
 
 def get_serper_api_key():
-    load_env()
-    openai_api_key = os.getenv("SERPER_API_KEY")
+    _load_env()
+    openai_api_key = getenv("SERPER_API_KEY")
     return openai_api_key
 
 
@@ -44,19 +44,19 @@ def pretty_print_result(result):
   return "\n".join(parsed_result)
 
 def get_mongo_uri():
-    load_env()
-    username = quote_plus(os.getenv("MONGO_USER"))
-    password = quote_plus(os.getenv("MONGO_PASSWORD"))
-    host = os.getenv("MONGO_HOST")
-    dbname = os.getenv("MONGO_DBNAME")
+    _load_env()
+    username = quote_plus(getenv("MONGO_USER"))
+    password = quote_plus(getenv("MONGO_PASSWORD"))
+    host = getenv("MONGO_HOST")
+    dbname = getenv("MONGO_DBNAME")
     return f"mongodb+srv://{username}:{password}@{host}/{dbname}" 
 
-def get_mongo_client():
+def _get_mongo_client():
     uri = get_mongo_uri()
     return MongoClient(uri, server_api=ServerApi('1'))
 
 def get_mongo_db():
-    client = get_mongo_client()
+    client = _get_mongo_client()
     client.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
-    return client[os.getenv("MONGO_DBNAME")]  # Nome do seu banco de dados
+    return client[getenv("MONGO_DBNAME")]  # Nome do seu banco de dados

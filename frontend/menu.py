@@ -3,6 +3,7 @@ import streamlit as st
 def _authenticated_menu():
     # Show a navigation menu for authenticated users
     st.sidebar.title("Menu")
+    st.sidebar.page_link("pages/teams.py", label="Times")
     st.sidebar.page_link("pages/generate.py", label="Gerar conteúdo")
     st.sidebar.page_link("pages/list.py", label="Listar conteúdos")
     #if st.session_state.role in ["admin", "super-admin"]:

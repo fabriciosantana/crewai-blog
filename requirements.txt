@@ -5,3 +5,6 @@ fastapi
 uvicorn
 ipython
 streamlit
+pymongo
+pandas
+streamlit-aggrid
