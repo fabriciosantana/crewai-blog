@@ -1,11 +1,15 @@
 import streamlit as st
 from menu import menu
+
 from pages.sections import list_teams as list_teams_section
 from pages.sections import add_team as add_team_section
 from pages.sections import edit_team as edit_team_section
+
 from pages.sections import add_agent as add_agent_section
 from pages.sections import edit_agent as edit_agent_section
+
 from pages.sections import add_task as add_task_section
+from pages.sections import edit_task as edit_task_section
 
 def main():
 
@@ -29,6 +33,10 @@ def main():
         st.session_state.agent = {}
     if 'adding_task' not in st.session_state:
         st.session_state.adding_task = False
+    if 'editing_task' not in st.session_state:
+        st.session_state.editing_task = False
+    if 'task_template' not in st.session_state:
+        st.session_state.task_template = {}
 
     if st.session_state.adding_team:
         add_team_section.show()
@@ -42,29 +50,10 @@ def main():
         edit_agent_section.show(st.session_state.team, st.session_state.agent)
     elif st.session_state.adding_task:
         add_task_section.show(st.session_state.team, st.session_state.agent)
+    elif st.session_state.editing_task:
+        edit_task_section.show(st.session_state.team, st.session_state.agent, st.session_state.task)
     else:
         list_teams_section.show()
-        
-def section_add_task():
-    st.header("Adicionar Atividades ao Agente")
-    team_id = st.session_state.get('team_id', '')
-    agent_id = st.text_input("ID do agente", value=st.session_state.get('agent_id', ''))
-    activity_description = st.text_area("Descrição da Atividade")
-    expected_output = st.text_area("Saída Esperada")
-
-    if st.button("Adicionar Atividade"):
-        if agent_id and activity_description and expected_output:
-            activity_data = {
-                "description": activity_description,
-                "expected_output": expected_output
-            }
-            response = requests.post(f"{get_backend_url()}/teams/{team_id}/{agent_id}/add_activity", json=activity_data)
-            if response.status_code == 200:
-                st.success("Atividade adicionada com sucesso!")
-            else:
-                st.error(f"Erro ao adicionar a atividade: {response.status_code} - {response.text}")
-        else:
-            st.warning("Por favor, preencha todos os campos.")
 
 if __name__ == "__main__":
     main()

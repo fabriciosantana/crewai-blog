@@ -56,6 +56,7 @@ def delete_agent(agent_id):
 
 def get_tasks(team_id: str, agent_id: str):
     response = requests.get(f"{get_backend_url()}/teams/{team_id}/agents/{agent_id}/tasks/list")
+    print(f"Response: {response.text}")
     if response.status_code == 200:
         return response.json()
     else:

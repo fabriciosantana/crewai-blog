@@ -142,15 +142,18 @@ def get_tasks(team_id: str, agent_id: str):
         db = utils.get_mongo_db()
         teams_collection = db["teams"]
         team = teams_collection.find_one({"_id": ObjectId(team_id)}, {"agents": 1, "_id": 0})
-        
+
         if not team:
             raise HTTPException(status_code=404, detail="Team not found")
         
          # Encontra o agente específico pelo ID
         agent = next((agent for agent in team.get("agents", []) if agent["_id"] == agent_id), None)
-        
+                
         if not agent:
             raise HTTPException(status_code=404, detail="Agent not found")
+
+        print(agent)
+        print(agent.get("tasks"))
 
         return agent.get("tasks", [])
     
