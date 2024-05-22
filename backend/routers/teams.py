@@ -18,13 +18,10 @@ def get_teams():
             team['_id'] = str(team['_id'])
 
         return teams
-        #print("Recuparando os times")
-        #for team in teams:
-        #    print(team)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.put("/teams/{team_id}")
+@router.put("/update/{team_id}")
 def update_team(team_id: str, team: Team):
     try:
         db = utils.get_mongo_db()
@@ -36,7 +33,7 @@ def update_team(team_id: str, team: Team):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.delete("/teams/{team_id}")
+@router.delete("/delete/{team_id}")
 def delete_team(team_id: str):
     try:
         db = utils.get_mongo_db()
@@ -65,10 +62,7 @@ def add_agent(team_id: str, agent: Agent):
 
         teams_collection = db["teams"]
 
-        print("teste")
         agent_data = agent.model_dump()
-
-        print(agent_data)
 
         agent_data["_id"] = str(ObjectId())
 
@@ -84,6 +78,38 @@ def add_agent(team_id: str, agent: Agent):
         last_agent = updated_team["agents"][-1]
 
         return {"message": "Agente adicionado com sucesso", "agent_id": f"{last_agent['_id']}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/{team_id}/agents/list")
+def get_agents(team_id: str):
+    try:
+        db = utils.get_mongo_db()
+        teams_collection = db["teams"]
+        team = teams_collection.find_one({"_id": ObjectId(team_id)}, {"agents": 1, "_id": 0})
+        
+        if not team:
+            raise HTTPException(status_code=404, detail="Team not found")
+
+        return team.get("agents", [])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/agents/delete/{agent_id}", response_model=dict)
+def delete_agent(agent_id: str):
+    try:
+        db = utils.get_mongo_db()
+        teams_collection = db["teams"]
+        
+        result = teams_collection.update_one(
+            {"agents._id": agent_id},
+            {"$pull": {"agents": {"_id": agent_id}}}
+        )
+
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Agent not found")
+
+        return {"message": "Agente excluído com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
