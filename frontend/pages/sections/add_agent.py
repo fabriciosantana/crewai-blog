@@ -30,9 +30,8 @@ def show(team_id: str):
 
                 if result:
                     st.success("Agente adicionado com sucesso!")
-                    #return result.json()["agent_id"]
                 else:
-                    st.error(f"Erro ao adicionar o agente")
+                    st.error("Erro ao adicionar o agente")
             else:
                 st.warning("Por favor, preencha todos os campos.")
     with col2:

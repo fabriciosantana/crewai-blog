@@ -42,10 +42,7 @@ def add_agent(team_id: str, agent_data):
 def delete_agent(agent_id):
     response = requests.delete(f"{get_backend_url()}/teams/agents/delete/{agent_id}")
     if response.status_code == 200:
-        #st.success("Agente excluído com sucesso!")
-        #st.experimental_rerun()
         return response.json()
     else:
-        #st.error(f"Erro ao excluir o agente: {response.status_code} - {response.text}")
         return []
 

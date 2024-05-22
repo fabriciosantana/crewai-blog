@@ -39,7 +39,7 @@ def main():
     elif st.session_state.adding_agent:
         add_agent_section.show(st.session_state.team_id)
     elif st.session_state.editing_agent:
-        edit_agent_section.show(st.session_state.team_id)
+        edit_agent_section.show(st.session_state.team_id, st.session_state.agent_id)
     else:
         list_teams_section.show()
         

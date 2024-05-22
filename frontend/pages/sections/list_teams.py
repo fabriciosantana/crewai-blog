@@ -15,7 +15,7 @@ def show():
 def _display_teams_grid(teams):
 
     col1, col2 = st.columns(2)
-    
+
     with col1:
         st.markdown("#### Lista de times")
 
@@ -24,7 +24,7 @@ def _display_teams_grid(teams):
             app_session_state.set_session_state_adding_team(True)
             
     cols = st.columns(3)
-    fields = ["Nome do Time", "Detalhes", "Excluir"]
+    fields = ["Nome do Time"]
 
     # header
     for col, field in zip(cols, fields):
@@ -39,22 +39,17 @@ def _display_teams_grid(teams):
         delete_placeholder = col3.empty()
 
         if alter_placeholder.button("Ver detalhes", key="alter_" + team["_id"]):
-            #st.session_state.team_id = team["_id"]
-            #st.session_state.show_create_team = False
-
             app_session_state.set_session_state_editing_team(True, team["_id"])
             edit_team_section.show(team["_id"])
 
-            #show_update_team_section(team["_id"])
-
         if delete_placeholder.button("Excluir", key="delete_" + team["_id"]):
             result = teams_controller.delete(team["_id"])
-
             if result:
                 st.success(f"Time {team['name']} excluído com sucesso!")                
             else:
                 st.error(f"Erro ao excluir time {team['name']}")
-            st.rerun()
+            app_session_state.set_session_state_listing_team(True)
+
 
 def _display_empty_grid():
     st.markdown("##### Você ainda não tem um time cadastrado.")
