@@ -13,7 +13,7 @@ def show():
         _display_empty_grid()
 
 def _display_teams_grid(teams):
-
+    print(teams)
     col1, col2 = st.columns(2)
 
     with col1:
@@ -32,6 +32,7 @@ def _display_teams_grid(teams):
 
     # rows
     for team in teams:
+        print(team)
         col1, col2, col3 = st.columns(3)
         col1.write(team["name"])
 
@@ -40,7 +41,6 @@ def _display_teams_grid(teams):
 
         if alter_placeholder.button("Ver detalhes", key="alter_" + team["_id"]):
             app_session_state.set_session_state_editing_team(True, team["_id"])
-            edit_team_section.show(team["_id"])
 
         if delete_placeholder.button("Excluir", key="delete_" + team["_id"]):
             result = teams_controller.delete(team["_id"])

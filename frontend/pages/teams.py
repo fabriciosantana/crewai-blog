@@ -1,8 +1,5 @@
 import streamlit as st
-import requests
-from utils import get_backend_url
 from menu import menu
-from controllers import teams as teams_controller
 from pages.sections import list_teams as list_teams_section
 from pages.sections import add_team as add_team_section
 from pages.sections import edit_team as edit_team_section

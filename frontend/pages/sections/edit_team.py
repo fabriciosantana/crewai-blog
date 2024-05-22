@@ -2,18 +2,21 @@ import streamlit as st
 from controllers import teams as teams_controller
 import app_session_state
 
-def show(team_id: str):
-    
-    agents = teams_controller.fetch_agents(team_id)
+def show(team):
+    agents = teams_controller.fetch_agents(team)
 
     if agents:
-        _display_agents_grid(team_id, agents)
+        _display_agents_grid(team, agents)
     else:
-        _display_empty_grid(team_id)
+        _display_empty_grid(team)
 
 def _display_agents_grid(team_id: str, agents):
 
-    st.markdown(f"#### Editando time *{team_id}*")
+    st.markdown("#### Editando time")
+    st.write(f"Id do time: {team_id}")
+    
+    if st.button("Voltar"):
+        app_session_state.set_session_state_listing_team(True)
 
     col1, col2 = st.columns(2)
     with col1:
