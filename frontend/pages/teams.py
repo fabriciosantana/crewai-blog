@@ -10,15 +10,9 @@ from pages.sections import add_agent as add_agent_section
 from pages.sections import edit_agent as edit_agent_section
 
 def main():
-    print("Carregando main")
-    menu()
-    #manage_teams_page()
 
-    # Gerenciar estado das seções
-    #if 'team_id' not in st.session_state:
-#        st.session_state.team_id = ''
-    #if 'agent_id' not in st.session_state:
-#        st.session_state.agent_id = ''
+    menu()
+
     if 'adding_team' not in st.session_state:
         st.session_state.adding_team = False
     if 'editing_team' not in st.session_state:
