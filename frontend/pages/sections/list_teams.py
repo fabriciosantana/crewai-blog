@@ -17,10 +17,10 @@ def _display_teams_grid(teams):
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("#### Lista de times")
+        st.markdown("##### Lista de Times")
 
     with col2:
-        if st.button("Adicionar novo time", type="primary"):
+        if st.button("Adicionar Time", type="primary"):
             app_session_state.set_session_state_adding_team(True)
             
     cols = st.columns(3)
@@ -39,8 +39,9 @@ def _display_teams_grid(teams):
         alter_placeholder = col2.empty()
         delete_placeholder = col3.empty()
 
-        if alter_placeholder.button("Ver detalhes", key="alter_" + team["_id"]):
-            app_session_state.set_session_state_editing_team(True, team["_id"])
+        if alter_placeholder.button("Editar", key="alter_" + team["_id"]):
+            #print(f"team antes do session state {team}")
+            app_session_state.set_session_state_editing_team(True, team)
 
         if delete_placeholder.button("Excluir", key="delete_" + team["_id"]):
             result = teams_controller.delete(team["_id"])
@@ -52,8 +53,7 @@ def _display_teams_grid(teams):
 
 
 def _display_empty_grid():
-    st.markdown("##### Você ainda não tem um time cadastrado.")
-    st.write("Para começar você precisa cadastrar um time.")
-    st.write("Clique no botão abaixo para cadastrar um time.")
-    if st.button("Cadastrar", type="primary"):
+    st.markdown("##### Você ainda não tem um time.")
+    st.write("Clique no botão abaixo para adicionar um time.")
+    if st.button("Adicionar Time", type="primary"):
         app_session_state.set_session_state_adding_team(True)

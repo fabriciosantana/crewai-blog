@@ -6,8 +6,9 @@ class Team(BaseModel):
 class Agent(BaseModel):
     role: str
     goal: str
-    context: str
+    backstory: str
 
-class Activity(BaseModel):
+class Task(BaseModel):
+    title: str
     description: str
     expected_output: str
