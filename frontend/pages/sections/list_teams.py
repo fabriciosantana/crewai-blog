@@ -13,7 +13,7 @@ def show():
         _display_empty_grid()
 
 def _display_teams_grid(teams):
-    print(teams)
+    
     col1, col2 = st.columns(2)
 
     with col1:
@@ -32,7 +32,7 @@ def _display_teams_grid(teams):
 
     # rows
     for team in teams:
-        print(team)
+        
         col1, col2, col3 = st.columns(3)
         col1.write(team["name"])
 

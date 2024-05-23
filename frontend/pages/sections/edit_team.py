@@ -58,10 +58,9 @@ def _display_agents_grid(team, agents):
         col1, col2, col3 = st.columns(3)
         col1.write(agent["role"])
         col2.write(agent["goal"])
-        #col3.write(agent["context"])
 
         alter_placeholder = col3.empty()
-        #delete_placeholder = col4.empty()
+
 
         if alter_placeholder.button("Editar", key="alter_" + agent["_id"]):
             app_session_state.set_session_state_editing_agent(True, team, agent)
