@@ -23,6 +23,8 @@ def main():
         st.session_state.editing_team = False
     if 'listing_team' not in st.session_state:
         st.session_state.listing_team = False
+    if 'deleting_team' not in st.session_state:
+        st.session_state.deleting_team = False
     if 'adding_agent' not in st.session_state:
         st.session_state.adding_agent = False
     if 'editing_agent' not in st.session_state:

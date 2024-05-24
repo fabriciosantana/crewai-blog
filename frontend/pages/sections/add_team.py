@@ -4,8 +4,6 @@ import app_session_state
 import time
 
 def show():
-    print("Carregando seção para criar time")
-
     st.markdown("#### Adicionar time")
     team_name = st.text_input("Nome do Time", key="team_name", placeholder="Digite o nome do time")
 

@@ -4,13 +4,6 @@ import app_session_state
 
 
 def show(team, agent):
-    print(">>>>>>>>>>>>>>>>>>")
-    print(team["_id"])
-    print(team["name"])
-    print(agent["_id"])
-    print(agent["role"])
-    print(agent["goal"])
-    print(agent["backstory"])
 
     tasks = teams_controller.get_tasks(team['_id'], agent['_id'])
 

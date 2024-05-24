@@ -31,6 +31,21 @@ def set_session_state_editing_team(editing_team: bool, team):
 
     st.rerun()
 
+def set_session_state_deleting_team(deleting_team: bool):
+    st.session_state.adding_team = not deleting_team
+    st.session_state.editing_team = not deleting_team
+    st.session_state.listing_team = not deleting_team
+    st.session_state.deleting_team = deleting_team
+
+    st.session_state.adding_agent = not deleting_team
+    st.session_state.editing_agent = not deleting_team
+
+    st.session_state.adding_task = not deleting_team
+    st.session_state.editing_task = not deleting_team
+
+    st.rerun()
+
+
 def set_session_state_listing_team(listing_team: bool):
     st.session_state.adding_team = not listing_team
     st.session_state.editing_team = not listing_team

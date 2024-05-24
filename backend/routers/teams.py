@@ -5,6 +5,8 @@ from bson.objectid import ObjectId
 import utils
 from models.teams import Team, Agent, Task
 
+from models.team_delete_request import TeamDeleteRequest
+
 router = APIRouter()
 
 @router.get("/list")
@@ -12,7 +14,7 @@ def get_teams():
     try:
         db = utils.get_mongo_db()
         teams_collection = db["teams"]
-        teams = list(teams_collection.find({}, {"_id": 1, "name": 1}))
+        teams = list(teams_collection.find({}))
 
         for team in teams:
             team['_id'] = str(team['_id'])
@@ -21,23 +23,36 @@ def get_teams():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.put("/update/{team_id}")
-def update_team(team_id: str, team: Team):
+@router.put("/update")
+def update_team(team: dict):
     try:
         db = utils.get_mongo_db()
         teams_collection = db["teams"]
 
-        print(team.model_dump())
+        team_id = team.pop("_id")
 
-        result = teams_collection.update_one({"_id": ObjectId(team_id)}, {"$set": team.model_dump()})
+        result = teams_collection.update_one({"_id": ObjectId(team_id)}, {"$set": team})
+
         if result.modified_count == 0:
             raise HTTPException(status_code=404, detail="Team not found")
         return {"message": "Team updated successfully"}
     except Exception as e:
+        print(str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/update_many")  
+def update_many(teams: List[dict]):
+    try:
+        print(teams)
+        for team in teams:
+            update_team(team)
+
+    except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/delete/{team_id}")
-def delete_team(team_id: str):
+def delete(team_id: str):
     try:
         db = utils.get_mongo_db()
         teams_collection = db["teams"]
@@ -46,6 +61,29 @@ def delete_team(team_id: str):
             raise HTTPException(status_code=404, detail="Team not found")
         return {"message": "Team deleted successfully"}
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+@router.delete("/delete")
+def delete_many(request: TeamDeleteRequest):
+    try:
+        db = utils.get_mongo_db()
+        teams_collection = db["teams"]
+
+        print(request)
+        # Converte os IDs da string para ObjectId
+        object_ids = [ObjectId(team_id) for team_id in request.team_ids]
+        print(object_ids)
+        # Deleta os times com os IDs fornecidos
+        result = teams_collection.delete_many({"_id": {"$in": object_ids}})
+
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="No teams found to delete")
+        
+        return {"message": f"{result.deleted_count} teams deleted successfully"}
+    except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/create_team")
@@ -57,6 +95,21 @@ def create_team(team: Team):
         return {"message": "Time criado com sucesso", "team_id": f"{result.inserted_id}"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@router.post("/add_many")
+def add_many(teams: List[dict]):
+    try:
+        db = utils.get_mongo_db()
+        teams_collection = db["teams"]
+
+        result = teams_collection.insert_many(teams)
+        
+        return {"message": f"{len(result.inserted_ids)} times criados com sucesso", "team_ids": [str(id) for id in result.inserted_ids]}
+
+    except Exception as e:
+        print(str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/{team_id}/add_agent")
 def add_agent(team_id: str, agent: Agent):

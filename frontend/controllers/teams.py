@@ -1,5 +1,7 @@
 import requests
 from utils import get_backend_url
+from typing import List
+
 
 def list():
     response = requests.get(f"{get_backend_url()}/teams/list")
@@ -16,16 +18,43 @@ def add(team_name: str):
         return response.json()
     else:
         return []
-    
-def delete(team_id):
-    response = requests.delete(f"{get_backend_url()}/teams/delete/{team_id}")
+
+def add_many(teams: List[dict]):
+    print("Adicionando time")
+    response = requests.post(f"{get_backend_url()}/teams/add_many", json=teams)
+    print(f"Response: {response.text}")
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return []
+
+
+def delete(team_ids):
+    response = requests.delete(f"{get_backend_url()}/teams/delete", json={"team_ids": team_ids})
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return []
+
+def delete_many(team_ids):
+    print("no controller")
+    print(team_ids)
+    response = requests.delete(f"{get_backend_url()}/teams/delete", json={"team_ids": team_ids})
     if response.status_code == 200:
         return response.json()
     else:
         return []
 
 def update(team):
-    response = requests.put(f"{get_backend_url()}/teams/update/{team['_id']}", json={"name": team["name"]})
+    response = requests.put(f"{get_backend_url()}/teams/update", json=team)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return []
+    
+def update_many(teams: List[dict]):
+    response = requests.put(f"{get_backend_url()}/teams/update_many", json=teams)
 
     if response.status_code == 200:
         return response.json()

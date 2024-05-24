@@ -5,7 +5,12 @@ import time
 
 def show(team):
 
-    agents = teams_controller.fetch_agents(team['_id'])
+    #st.write(team)
+
+    if 'agents' in team:
+        agents = team['agents']
+    else:
+        agents = teams_controller.fetch_agents(team['_id'])
 
     _show_edit(team)
 
