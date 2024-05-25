@@ -6,13 +6,12 @@ from controllers import assignment as assignment_controller
 import pandas as pd
 import app_session_state 
 import json
+st.set_page_config(layout="wide")
 
 def main():
     menu()
 
-    st.markdown("##### Demandas")
-
-    assignment_tab, assingment_list_tab = st.tabs(["Registrar demanda", "Listar demandas"])
+    assignment_tab, assingment_list_tab = st.tabs(["Nova demanda", "Demandas"])
 
     with assignment_tab:
         register_assignment()
@@ -21,9 +20,8 @@ def main():
 
 def register_assignment():
 
-    assignment_title = st.text_input("Título")
-    assignment_description = st.text_area("Descrição")
-   
+    assignment_title = st.text_input("Assunto:")
+    #assignment_description = st.text_area("Descrição")
     teams = teams_controller.list()
 
     #selected_team = None
@@ -50,16 +48,18 @@ def register_assignment():
     message_placeholder = st.empty()
 
     if st.button("Registrar"):
-        if selected_team and assignment_description:
+        if selected_team: #and assignment_description
 
             assignment_data = {
                 "title": assignment_title,
-                "description": assignment_description,
+                #"description": assignment_description,
                 "created_at": datetime.datetime.now().isoformat(),
+                "finished_at": None,
                 "assigned_to": selected_team
             }
-
-            result = assignment_controller.add(assignment_data)
+            
+            with st.spinner('Aguarde, o time está trabalhando para atender sua demanda...'):
+                result = assignment_controller.add(assignment_data)
 
             if result:
                 message_placeholder.success("Demanda registrada com sucesso!")
@@ -73,50 +73,65 @@ def list_assignments():
     assignments = assignment_controller.list()
 
     if assignments:
+        
         df = pd.DataFrame(assignments)
+
+        df['assigned_to_team_name'] = df['assigned_to'].apply(lambda x: x['name'])
+        df['created_at'] = pd.to_datetime(df['created_at']).dt.strftime('%d/%m/%Y %H:%M:%S')
+        df['finished_at'] = pd.to_datetime(df['finished_at']).dt.strftime('%d/%m/%Y %H:%M:%S')
+
+       
+        # Configure seu data_editor para usar o tooltip
+        #st.data_editor(df.drop(columns=['texto_original']), tooltip_data=df['texto_tooltip'])
 
         if 'select' not in df:
             df.insert(0, "select", False)
 
         edited_df = st.data_editor(df, 
                                 key="assignment_editor_key",
-                                num_rows="dynamic",
+                                num_rows="fixed",
                                 disabled=["_id"],
                                 hide_index=True,
-                                column_order=["title", "created_at", "select"],
+                                column_order=["select", "title", "assigned_to_team_name", "created_at", "status", "finished_at"],
                                 column_config={
                                     "_id": st.column_config.Column(disabled=True),
                                     "title": st.column_config.Column("Título"),
+                                    "assigned_to_team_name": st.column_config.Column("Atribuído para"),
                                     "created_at": st.column_config.Column("Criado em"),
+                                    "status": st.column_config.Column("Situação"),
+                                    "finished_at": st.column_config.Column("Finalizado em"),
                                     "select": st.column_config.CheckboxColumn("", required=True, default=False)
                                 },
                                 use_container_width=True)
 
         placeholder = st.empty()
 
-        if _is_pending_save():
-            placeholder.info("Clique no botão 'Salvar' para salvar alterações pendentes.")
-            placeholder.warning("Ao clicar em 'Salvar' todas as alterações serão gravadas no banco de dados.")
-        else:
-            placeholder.empty()
-
         col1, col2 = st.columns(2)
-
+        content = None
+        #with col1:
+            #if st.button("Salvar", type="primary"):
+            #    _save_rows(df.drop('select', axis=1))
         with col1:
-            if st.button("Salvar", type="primary"):
-                _save_rows(df.drop('select', axis=1))
-        with col2:
-            if st.button("Editar"):
+            if st.button("Ver detalhes", type="primary"):
                 if _is_one_row_selected():
-                    #_edit_team()
-                    selected_team = json.loads(edited_df[edited_df.select].drop('select', axis=1).iloc[0].to_json())
-                    st.write(selected_team)
-                    app_session_state.set_session_state_editing_team(True, selected_team)
+                    content = edited_df[edited_df.select].iloc[0]["content"]
                 else:
-                    placeholder.info("Selecione um time para editar.")
+                    placeholder.info("Selecione uma demanda.")
+        with col2:
+            if st.button("Excluir"):
+                if _is_one_row_selected():
+                    _delete_rows(edited_df[edited_df.select])
+                    st.rerun()
+                else:
+                    placeholder.info("Selecione uma demanda.")
+
+        if content:
+            with st.expander("Resultado da demanda"):
+                st.markdown(content)
     else:
         st.write("Não há demandas registradas.")
-
+    
+    
 def _is_pending_save() -> bool:
     if  (st.session_state["assignment_editor_key"]["added_rows"] or
         st.session_state["assignment_editor_key"]["deleted_rows"]):
@@ -192,8 +207,7 @@ def _delete_rows(df: pd.DataFrame):
         for row in st.session_state["assignment_editor_key"]["deleted_rows"]:
             rows_to_delete.append(df.iloc[row]['_id'])
     else:
-        for team_id in df:
-            rows_to_delete.append(team_id)
+        rows_to_delete = df["_id"].tolist()
 
     result = assignment_controller.delete_many(rows_to_delete)
 

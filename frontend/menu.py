@@ -5,8 +5,8 @@ def _authenticated_menu():
     st.sidebar.title("Menu")
     st.sidebar.page_link("pages/assignment.py", label="Demandas")
     st.sidebar.page_link("pages/teams.py", label="Times")
-    st.sidebar.page_link("pages/generate.py", label="Gerar conteúdo")
-    st.sidebar.page_link("pages/list.py", label="Listar conteúdos")
+    #st.sidebar.page_link("pages/generate.py", label="Gerar conteúdo")
+    #st.sidebar.page_link("pages/list.py", label="Listar conteúdos")
     
 
     #if st.session_state.role in ["admin", "super-admin"]:

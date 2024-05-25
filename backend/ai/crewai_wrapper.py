@@ -32,9 +32,8 @@ def execute(assignment: dict):
         tasks=task_list,
         verbose=2)
 
-        print("vai chamar kickoff")
-        result = crew.kickoff(inputs={"topic": assignment["description"]})
-        print("chamou o kickoff")
+        result = crew.kickoff(inputs={"topic": assignment["title"]})
+        #result = "Teste. Crew está desligado"
 
         try:
 
@@ -43,8 +42,8 @@ def execute(assignment: dict):
             assignments_collection = db["assignments"]  # Nome da coleção
             post = {
                 "content": result,
-                "status": "generated",
-                "finshed_at": datetime.now() 
+                "status": "Concluído",
+                "finished_at": datetime.now() 
             }
             assignments_collection.update_one({"_id": ObjectId(assignment["_id"])}, {"$set": post})
 
