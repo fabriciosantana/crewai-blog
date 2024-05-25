@@ -12,7 +12,7 @@ def display_posts_page():
     st.header("Conteúdo gerado")
 
     with st.spinner('Carregando conteúdo...'):
-        response = requests.get( f"{get_backend_url()}/get_posts")
+        response = requests.get( f"{get_backend_url()}/blog/get_posts")
 
         if response.status_code == 200:
             posts = response.json()

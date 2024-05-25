@@ -5,7 +5,6 @@ from pages.sections import edit_team as edit_team_section
 import pandas as pd
 import app_session_state 
 import json
-from st_ant_tree import st_ant_tree
 
 def show():
     
@@ -63,7 +62,8 @@ def _new_display_teams_grid(teams):
 
     df = pd.DataFrame(teams)
 
-    df.insert(0, "select", False)
+    if 'select' not in df:
+        df.insert(0, "select", False)
 
     edited_df = st.data_editor(df, 
                                key="my_key",
@@ -148,6 +148,10 @@ def _save_rows(df: pd.DataFrame):
 
 def _add_rows():
     
+    st.write(st.session_state["my_key"]["added_rows"])
+    for added_row in st.session_state["my_key"]["added_rows"]:
+        added_row.pop('select')
+    st.write(st.session_state["my_key"]["added_rows"])
     result = teams_controller.add_many(st.session_state["my_key"]["added_rows"])
 
     return result

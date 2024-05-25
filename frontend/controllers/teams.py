@@ -37,8 +37,6 @@ def delete(team_ids):
         return []
 
 def delete_many(team_ids):
-    print("no controller")
-    print(team_ids)
     response = requests.delete(f"{get_backend_url()}/teams/delete", json={"team_ids": team_ids})
     if response.status_code == 200:
         return response.json()

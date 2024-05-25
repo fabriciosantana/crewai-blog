@@ -35,7 +35,7 @@ def generate_blog_page():
 
     if generate_content:
         with st.spinner('Gerando...'):
-                    response = requests.post(f"{get_backend_url()}/generate_blog",
+                    response = requests.post(f"{get_backend_url()}/blog/generate_blog",
                         json={"topic": topic}
                     )
 
