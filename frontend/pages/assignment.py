@@ -6,7 +6,6 @@ from controllers import assignment as assignment_controller
 import pandas as pd
 import app_session_state 
 import json
-st.set_page_config(layout="wide")
 
 def main():
     menu()
